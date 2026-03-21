@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario de Ingresos</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #2c3e50; color: #ecf0f1; }
+        h2 { text-align: center; color: #1abc9c; margin-bottom: 5px; }
+        #fecha-hoy { text-align: center; font-size: 1.2em; color: #3498db; font-weight: bold; margin-top: 0; margin-bottom: 20px; }
+        table { width: 100%; max-width: 950px; margin: 0 auto; border-collapse: collapse; background-color: #34495e; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid #7f8c8d; text-align: center; }
+        th { background-color: #16a085; color: white; text-transform: uppercase; font-size: 0.9em; }
+        tr:hover { background-color: #3d566e; }
+        .pagado { background-color: #27ae60 !important; color: white; }
+        .monto { color: #f1c40f; font-weight: bold; font-size: 1.1em; }
+        .numero { font-weight: bold; color: #1abc9c; font-size: 1.1em; }
+        .pagado .numero { color: white; }
+        input[type="date"] { padding: 8px; border-radius: 4px; border: none; background-color: #ecf0f1; color: #2c3e50; font-weight: bold; }
+        input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
+        .dias { font-weight: bold; color: #3498db; }
+        .pagado .dias, .pagado .monto { color: white; }
+        tfoot th { background-color: #1abc9c; font-size: 1.1em; }
+        .controles-backup { text-align: center; margin-top: 25px; }
+        .btn { background-color: #2980b9; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; margin: 0 10px; font-weight: bold; }
+        .btn:hover { background-color: #1f618d; }
+        .btn-cargar { background-color: #d35400; }
+        .btn-cargar:hover { background-color: #a04000; }
+    </style>
+</head>
+<body>
+
+    <h2>Calendario mensual de pagos</h2>
+    <p id="fecha-hoy"></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nº</th>
+                <th>Ingresos Pasivos</th>
+                <th>Monto</th>
+                <th>Fecha programada</th>
+                <th>Estado del tiempo</th>
+                <th>¿Cobrado?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="fila-1">
+                <td class="numero">1</td>
+                <td>Otros</td>
+                <td class="monto" data-valor="000000">$000.000</td>
+                <td><input type="date" id="fecha-1" onchange="calcularDias(1); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-1">--</td>
+                <td><input type="checkbox" id="check-1" onchange="marcarPagado(1); guardarDatosLocales();"></td>
+            </tr>
+            <tr id="fila-2">
+                <td class="numero">2</td>
+                <td>Alquiler Palpalá abajo</td>
+                <td class="monto" data-valor="380000">$380.000</td>
+                <td><input type="date" id="fecha-2" onchange="calcularDias(2); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-2">--</td>
+                <td><input type="checkbox" id="check-2" onchange="marcarPagado(2); guardarDatosLocales();"></td>
+            </tr>
+            <tr id="fila-3">
+                <td class="numero">3</td>
+                <td>Alquiler Palpalá arriba</td>
+                <td class="monto" data-valor="280000">$280.000</td>
+                <td><input type="date" id="fecha-3" onchange="calcularDias(3); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-3">--</td>
+                <td><input type="checkbox" id="check-3" onchange="marcarPagado(3); guardarDatosLocales();"></td>
+            </tr>
+            <tr id="fila-4">
+                <td class="numero">4</td>
+                <td>Alquiler Av. Brasil</td>
+                <td class="monto" data-valor="460000">$460.000</td>
+                <td><input type="date" id="fecha-4" onchange="calcularDias(4); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-4">--</td>
+                <td><input type="checkbox" id="check-4" onchange="marcarPagado(4); guardarDatosLocales();"></td>
+            </tr>
+            <tr id="fila-5">
+                <td class="numero">5</td>
+                <td>Alquiler Calle Ecuador</td>
+                <td class="monto" data-valor="87000">$87.000</td>
+                <td><input type="date" id="fecha-5" onchange="calcularDias(5); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-5">--</td>
+                <td><input type="checkbox" id="check-5" onchange="marcarPagado(5); guardarDatosLocales();"></td>
+            </tr>
+            <tr id="fila-6">
+                <td class="numero">6</td>
+                <td>Inversiones</td>
+                <td class="monto" data-valor="790000">$790.000</td>
+                <td><input type="date" id="fecha-6" onchange="calcularDias(6); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-6">--</td>
+                <td><input type="checkbox" id="check-6" onchange="marcarPagado(6); guardarDatosLocales();"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="2" style="text-align: right;">TOTAL ESPERADO:</th>
+                <th id="total-esperado">$0</th>
+                <th colspan="2" style="text-align: right;">TOTAL COBRADO:</th>
+                <th id="total-cobrado">$0</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="controles-backup">
+        <button class="btn" onclick="descargarBackup()">💾 Descargar Backup</button>
+        <label class="btn btn-cargar" style="cursor: pointer;">
+            📂 Cargar Backup
+            <input type="file" accept=".json" style="display: none;" onchange="cargarDesdeArchivo(event)">
+        </label>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const hoy = new Date();
+            document.getElementById('fecha-hoy').innerText = hoy.toLocaleDateString('es-ES', opciones);
+            
+            cargarDatosLocales(); 
+            actualizarTotales();
+        };
+
+        function calcularDias(id) {
+            const input = document.getElementById('fecha-' + id).value;
+            if (!input) return;
+
+            const partes = input.split('-');
+            const fechaPago = new Date(partes[0], partes[1] - 1, partes[2]);
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            const diferencia = fechaPago.getTime() - hoy.getTime();
+            const dias = Math.ceil(diferencia / (1000 * 3600 * 24));
+
+            const textoDias = document.getElementById('dias-' + id);
+            if (dias > 0) {
+                textoDias.innerText = 'Faltan ' + dias + ' días';
+            } else if (dias === 0) {
+                textoDias.innerText = '¡Es hoy!';
+            } else {
+                textoDias.innerText = 'Atrasado ' + Math.abs(dias) + ' días';
+            }
+        }
+
+        function marcarPagado(id) {
+            const fila = document.getElementById('fila-' + id);
+            const checkbox = document.getElementById('check-' + id);
+            if (checkbox.checked) {
+                fila.classList.add('pagado');
+            } else {
+                fila.classList.remove('pagado');
+            }
+            actualizarTotales();
+        }
+
+        function actualizarTotales() {
+            let totalEsperado = 0;
+            let totalCobrado = 0;
+
+            for (let i = 1; i <= 6; i++) {
+                let celda = document.querySelector('#fila-' + i + ' .monto');
+                let monto = parseFloat(celda.getAttribute('data-valor')) || 0;
+
+                totalEsperado += monto;
+
+                let checkbox = document.getElementById('check-' + i);
+                if (checkbox && checkbox.checked) {
+                    totalCobrado += monto;
+                }
+            }
+
+            document.getElementById('total-esperado').innerText = '$' + totalEsperado.toLocaleString('es-ES');
+            document.getElementById('total-cobrado').innerText = '$' + totalCobrado.toLocaleString('es-ES');
+        }
+
+        // --- SISTEMA DE BACKUP ---
+
+        function guardarDatosLocales() {
+            const datos = {};
+            for (let i = 1; i <= 6; i++) {
+                const fecha = document.getElementById('fecha-' + i);
+                const check = document.getElementById('check-' + i);
+                if (fecha) datos['fecha-' + i] = fecha.value;
+                if (check) datos['check-' + i] = check.checked;
+            }
+            localStorage.setItem('backupCalendario', JSON.stringify(datos));
+        }
+
+        function cargarDatosLocales() {
+            const datosGuardados = localStorage.getItem('backupCalendario');
+            if (datosGuardados) {
+                const datos = JSON.parse(datosGuardados);
+                for (let i = 1; i <= 6; i++) {
+                    if (datos['fecha-' + i]) {
+                        document.getElementById('fecha-' + i).value = datos['fecha-' + i];
+                        calcularDias(i);
+                    }
+                    if (datos['check-' + i] !== undefined) {
+                        document.getElementById('check-' + i).checked = datos['check-' + i];
+                        marcarPagado(i);
+                    }
+                }
+            }
+        }
+
+        function descargarBackup() {
+            const datosGuardados = localStorage.getItem('backupCalendario') || '{}';
+            const blob = new Blob([datosGuardados], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'backup_ingresos_calendario.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function cargarDesdeArchivo(event) {
+            const archivo = event.target.files[0];
+            if (!archivo) return;
+            
+            const lector = new FileReader();
+            lector.onload = function(e) {
+                const contenido = e.target.result;
+                localStorage.setItem('backupCalendario', contenido);
+                cargarDatosLocales();
+                alert('¡Backup cargado correctamente!');
+            };
+            lector.readAsText(archivo);
+        }
+    </script>
+</body>
+</html>
