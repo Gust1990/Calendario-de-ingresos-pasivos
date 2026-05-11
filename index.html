@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Calendario de Ingresos</title>
+    
+    <!-- Etiquetas PWA y Favicon SVG Base64 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Ingresos">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMmMzZTUwIi8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzUiIGZpbGw9IiNmMWM0MGYiLz48dGV4dCB4PSI1MCIgeT0iNjUiIGZvbnQtc2l6ZT0iNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMyYzNlNTAiPiQ8L3RleHQ+PC9zdmc+" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMmMzZTUwIi8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzUiIGZpbGw9IiNmMWM0MGYiLz48dGV4dCB4PSI1MCIgeT0iNjUiIGZvbnQtc2l6ZT0iNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMyYzNlNTAiPiQ8L3RleHQ+PC9zdmc+">
+
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #2c3e50; color: #ecf0f1; }
         h2 { text-align: center; color: #1abc9c; margin-bottom: 5px; }
@@ -47,7 +55,7 @@
             <tr id="fila-1">
                 <td class="numero">1</td>
                 <td>LC Banco Galicia</td>
-                <td class="monto" data-valor="000000">$800.000</td>
+                <td class="monto" data-valor="800000">$800.000</td>
                 <td><input type="date" id="fecha-1" onchange="calcularDias(1); guardarDatosLocales();"></td>
                 <td class="dias" id="dias-1">--</td>
                 <td><input type="checkbox" id="check-1" onchange="marcarPagado(1); guardarDatosLocales();"></td>
@@ -71,7 +79,7 @@
             <tr id="fila-4">
                 <td class="numero">4</td>
                 <td>Alquiler Av. Brasil</td>
-                <td class="monto" data-valor="460000">$530.000</td>
+                <td class="monto" data-valor="530000">$530.000</td>
                 <td><input type="date" id="fecha-4" onchange="calcularDias(4); guardarDatosLocales();"></td>
                 <td class="dias" id="dias-4">--</td>
                 <td><input type="checkbox" id="check-4" onchange="marcarPagado(4); guardarDatosLocales();"></td>
@@ -79,7 +87,7 @@
             <tr id="fila-5">
                 <td class="numero">5</td>
                 <td>Alquiler Calle Ecuador</td>
-                <td class="monto" data-valor="87000">$90.000</td>
+                <td class="monto" data-valor="90000">$90.000</td>
                 <td><input type="date" id="fecha-5" onchange="calcularDias(5); guardarDatosLocales();"></td>
                 <td class="dias" id="dias-5">--</td>
                 <td><input type="checkbox" id="check-5" onchange="marcarPagado(5); guardarDatosLocales();"></td>
@@ -87,10 +95,19 @@
             <tr id="fila-6">
                 <td class="numero">6</td>
                 <td>Dividendos</td>
-                <td class="monto" data-valor="790000">$450.000</td>
+                <td class="monto" data-valor="450000">$450.000</td>
                 <td><input type="date" id="fecha-6" onchange="calcularDias(6); guardarDatosLocales();"></td>
                 <td class="dias" id="dias-6">--</td>
                 <td><input type="checkbox" id="check-6" onchange="marcarPagado(6); guardarDatosLocales();"></td>
+            </tr>
+            <!-- NUEVA FILA AÑADIDA -->
+            <tr id="fila-7">
+                <td class="numero">7</td>
+                <td>BRKB + Futuro de Dólar</td>
+                <td class="monto" data-valor="100000">$100.000</td>
+                <td><input type="date" id="fecha-7" onchange="calcularDias(7); guardarDatosLocales();"></td>
+                <td class="dias" id="dias-7">--</td>
+                <td><input type="checkbox" id="check-7" onchange="marcarPagado(7); guardarDatosLocales();"></td>
             </tr>
         </tbody>
         <tfoot>
@@ -158,10 +175,12 @@
             let totalEsperado = 0;
             let totalCobrado = 0;
 
-            for (let i = 1; i <= 6; i++) {
+            // Bucle modificado hasta 7
+            for (let i = 1; i <= 7; i++) {
                 let celda = document.querySelector('#fila-' + i + ' .monto');
+                if(!celda) continue;
+                
                 let monto = parseFloat(celda.getAttribute('data-valor')) || 0;
-
                 totalEsperado += monto;
 
                 let checkbox = document.getElementById('check-' + i);
@@ -178,10 +197,11 @@
 
         function guardarDatosLocales() {
             const datos = {};
-            for (let i = 1; i <= 6; i++) {
+            // Bucle modificado hasta 7
+            for (let i = 1; i <= 7; i++) {
                 const fecha = document.getElementById('fecha-' + i);
                 const check = document.getElementById('check-' + i);
-                if (fecha) datos['fecha-' + i] = fecha.value;
+                if (fecha && fecha.value) datos['fecha-' + i] = fecha.value;
                 if (check) datos['check-' + i] = check.checked;
             }
             localStorage.setItem('backupCalendario', JSON.stringify(datos));
@@ -191,20 +211,28 @@
             const datosGuardados = localStorage.getItem('backupCalendario');
             if (datosGuardados) {
                 const datos = JSON.parse(datosGuardados);
-                for (let i = 1; i <= 6; i++) {
+                // Bucle modificado hasta 7
+                for (let i = 1; i <= 7; i++) {
                     if (datos['fecha-' + i]) {
-                        document.getElementById('fecha-' + i).value = datos['fecha-' + i];
-                        calcularDias(i);
+                        const fechaInput = document.getElementById('fecha-' + i);
+                        if (fechaInput) {
+                            fechaInput.value = datos['fecha-' + i];
+                            calcularDias(i);
+                        }
                     }
                     if (datos['check-' + i] !== undefined) {
-                        document.getElementById('check-' + i).checked = datos['check-' + i];
-                        marcarPagado(i);
+                        const checkInput = document.getElementById('check-' + i);
+                        if (checkInput) {
+                            checkInput.checked = datos['check-' + i];
+                            marcarPagado(i);
+                        }
                     }
                 }
             }
         }
 
         function descargarBackup() {
+            guardarDatosLocales(); // Asegura tener la última versión
             const datosGuardados = localStorage.getItem('backupCalendario') || '{}';
             const blob = new Blob([datosGuardados], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -224,6 +252,7 @@
                 const contenido = e.target.result;
                 localStorage.setItem('backupCalendario', contenido);
                 cargarDatosLocales();
+                actualizarTotales();
                 alert('¡Backup cargado correctamente!');
             };
             lector.readAsText(archivo);
